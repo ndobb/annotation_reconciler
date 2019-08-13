@@ -1,6 +1,5 @@
 
 class Indices:
-
     def __init__(self, input: str):
 
         self.index_type = ''
@@ -15,12 +14,11 @@ class Indices:
             self.end = split[2]
 
 class BratRow:
-
-    id = None
-    indices = None
-    text = None
-
     def __init__(self, row: str):
+
+        id = None
+        indices = None
+        text = None
 
         split = row.strip().split('\t')
         cnt = len(split)

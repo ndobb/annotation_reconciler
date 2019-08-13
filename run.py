@@ -31,9 +31,8 @@ def save_gold_file(out_dir: str, file: BratFile):
         f.write(f'{row.to_string()}\r\n')
     
     f.close()
-            
 
-def intersect():
+def prep(dir_name: str):
     currDir = os.getcwd()
 
     # Get annotations
@@ -41,8 +40,14 @@ def intersect():
     anno2 = get_brat_objects(os.path.join(currDir, "input", "annotator2"))
 
     # Prep output directory
-    out_dir = os.path.join(currDir, "output", "intersection")
+    out_dir = os.path.join(currDir, "output", dir_name)
     make_clean_dir(out_dir)
+
+    return out_dir, anno1, anno2
+
+
+def intersect():
+    out_dir, anno1, anno2 = prep("intersect")
 
     for anno in anno1:
 
@@ -51,7 +56,7 @@ def intersect():
         cnt = len(matches)
 
         if cnt == 0:
-            print(f'No matches found for "{anno.path}"...')
+            print(f'No matches found for file "{anno.path}". Skipping file...')
             continue
 
         if cnt > 1:
@@ -62,15 +67,7 @@ def intersect():
         save_gold_file(out_dir, gold)
 
 def union():
-    currDir = os.getcwd()
-
-    # Get annotations
-    anno1 = get_brat_objects(os.path.join(currDir, "input", "annotator1"))
-    anno2 = get_brat_objects(os.path.join(currDir, "input", "annotator2"))
-
-    # Prep output directory
-    out_dir = os.path.join(currDir, "output", "union")
-    make_clean_dir(out_dir)
+    out_dir, anno1, anno2 = prep("union")
 
     # Check first annotator
     for anno in anno1:
@@ -110,4 +107,4 @@ def union():
         gold = anno.union(match)
         save_gold_file(out_dir, gold)
     
-union()
+intersect()
