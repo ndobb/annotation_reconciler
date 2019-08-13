@@ -51,14 +51,63 @@ def intersect():
         cnt = len(matches)
 
         if cnt == 0:
-            print(f'No matches found for "{anno.path}""')
+            print(f'No matches found for "{anno.path}"...')
             continue
 
         if cnt > 1:
             print(f'{cnt} matches were unexpectedly found for "{anno.path}". Taking only the first...')
 
-        file_match = matches[0]
-        gold = anno.intersect(file_match)
+        match = matches[0]
+        gold = anno.intersect(match)
         save_gold_file(out_dir, gold)
 
-intersect()
+def union():
+    currDir = os.getcwd()
+
+    # Get annotations
+    anno1 = get_brat_objects(os.path.join(currDir, "input", "annotator1"))
+    anno2 = get_brat_objects(os.path.join(currDir, "input", "annotator2"))
+
+    # Prep output directory
+    out_dir = os.path.join(currDir, "output", "union")
+    make_clean_dir(out_dir)
+
+    # Check first annotator
+    for anno in anno1:
+
+        # Find matching Brat file
+        matches = [brat for brat in anno2 if brat.path == anno.path]
+        cnt = len(matches)
+
+        if cnt == 0:
+            print(f'No matches found for file "{anno.path}". Saving single annotation file without union...')
+            save_gold_file(out_dir, anno)
+            continue
+
+        if cnt > 1:
+            print(f'{cnt} matches were unexpectedly found for "{anno.path}". Taking only the first...')
+
+        match = matches[0]
+        gold = anno.union(match)
+        save_gold_file(out_dir, gold)
+
+    # Check second annotator
+    for anno in anno2:
+
+        # Find matching Brat file
+        matches = [brat for brat in anno1 if brat.path == anno.path]
+        cnt = len(matches)
+
+        if cnt == 0:
+            print(f'No matches found for file "{anno.path}". Saving single annotation file without union...')
+            save_gold_file(out_dir, anno)
+            continue
+
+        if cnt > 1:
+            print(f'{cnt} matches were unexpectedly found for "{anno.path}". Taking only the first...')
+
+        match = matches[0]
+        gold = anno.union(match)
+        save_gold_file(out_dir, gold)
+    
+union()

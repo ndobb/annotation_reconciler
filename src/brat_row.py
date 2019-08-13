@@ -26,7 +26,7 @@ class BratRow:
         cnt = len(split)
 
         if cnt != 3:
-            print(f'Error: only {cnt} items were found...')
+            print(f'Warning: only {cnt} items were found in BratRow: "{row}". Skipping...')
             return
 
         self.id = split[0]

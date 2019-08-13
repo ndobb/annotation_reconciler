@@ -1,5 +1,5 @@
 import os
-import copy
+from copy import copy
 from src.brat_row import BratRow
 
 class BratFile:
@@ -36,11 +36,12 @@ class BratFile:
         gold.path = self.path
         row_cnt = 1
 
-        for row in comparator.rows:
+        for row in self.rows:
             match: BratRow = comparator.get_match(row)
             if match is not None:
-                match.id = f'T{row_cnt}'
-                gold.rows.append(match)
+                new_row = copy(match)
+                new_row.id = f'T{row_cnt}'
+                gold.rows.append(new_row)
                 row_cnt += 1
 
         return gold
@@ -51,8 +52,17 @@ class BratFile:
         row_cnt = 1
 
         for row in self.rows:
-            new_row = copy.copy(row)
+            new_row = copy(row)
             new_row.id = f'T{row_cnt}'
             gold.rows.append(new_row)
+            row_cnt += 1
+
+        for row in comparator.rows:
+            existing = gold.get_match(row)
+            if existing is None:
+                new_row = copy(row)
+                new_row.id = f'T{row_cnt}'
+                gold.rows.append(new_row)
+                row_cnt += 1
 
         return gold
