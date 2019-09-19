@@ -53,16 +53,18 @@ class BratFile:
 
         for row in self.rows:
             new_row = copy(row)
-            new_row.id = f'T{row_cnt}'
             gold.rows.append(new_row)
-            row_cnt += 1
 
         for row in comparator.rows:
             existing = gold.get_match(row)
             if existing is None:
                 new_row = copy(row)
-                new_row.id = f'T{row_cnt}'
                 gold.rows.append(new_row)
-                row_cnt += 1
+        
+        rows_sorted = sorted(gold.rows, key=lambda x: x.indices.start)
+        for r in rows_sorted:
+            r.id = f'T{row_cnt}'
+            row_cnt += 1
+        gold.rows = rows_sorted
 
         return gold

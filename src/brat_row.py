@@ -1,38 +1,35 @@
 
 class Indices:
-    def __init__(self, input: str):
+    def __init__(self, type, start, end):
 
-        self.index_type = ''
-        self.start = -1
-        self.end = -1
-        
-        split = input.split(' ')
+        # print(f'Start Index: {start}')
+        self.index_type = type
+        self.start = self.stringToIndexInt(start)
+        self.end = self.stringToIndexInt(end)
 
-        if len(split) == 3:
-            self.index_type = split[0]
-            self.start = split[1]
-            self.end = split[2]
+    def stringToIndexInt(self, idx):
+
+        splt = idx.split(';')
+        val = splt[0]
+        if val.isnumeric():
+            return int(val)
+        return -1
 
 class BratRow:
     def __init__(self, row: str):
 
-        id = None
-        indices = None
-        text = None
+        self.id = None
+        self.indices = None
+        self.text = None
 
-        split = row.strip().split('\t')
-        cnt = len(split)
-
-        if cnt != 3:
-            print(f'Warning: only {cnt} items were found in BratRow: "{row}". Skipping...')
-            return
-
-        self.id = split[0]
-        self.indices = Indices(split[1])
-        self.text = split[2]
+        entity = row.split()
+        if len(entity) >= 4:
+            self.id = entity[0]
+            self.indices = Indices(entity[1], entity[2], entity[3])
+            self.text = ' '.join(entity[4:])
 
     def valid(self):
-        return self.id is not None
+        return self.id is not None and self.indices.start > -1 and self.indices.end > -1
 
     def to_string(self):
         separator = '\t'
