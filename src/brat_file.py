@@ -1,4 +1,5 @@
 import os
+import sys
 from copy import copy
 from src.brat_row import BratRow
 
@@ -13,77 +14,69 @@ class BratFile:
             self.path = os.path.basename(filepath)
             with open(filepath) as fp:
                 for line in fp:
-                    row = BratRow(line)
+                    row = BratRow(filepath, line)
                     if (row.valid()):
-                        self.rows.append(BratRow(line))
+                        self.rows.append(row)
 
-    def get_row_match(self, comparator, strict):
-        if strict == True:
-            return get_strict_match(self, comparator)
-        return get_overlap_label_match(self, comparator)
+    def union_rows(self, comparator):
+        A = self
+        B = comparator
 
-    def get_strict_match(self, comparator):
+        make_row_id = lambda x: f'{x.indices.index_type}|{x.indices.start}|{x.indices.end}'
 
-        # Look for a match by exact indices
-        matches = [row for row in self.rows if 
-            comparator.indices.start == row.indices.start and 
-            comparator.indices.end == row.indices.end and 
-            comparator.indices.index_type == row.indices.index_type
-        ]
-    
-        if len(matches) > 0:
-            return matches[0]
-    
-        return None
+        # Assign parent ids, then union
+        for row in A.rows:
+            row.set_annotator_id('A')
+        for row in B.rows:
+            row.set_annotator_id('B')
+        union = A.rows + B.rows
+        final = []
+        done = set()
 
-    def get_overlap_label_match(self, comparator):
+        # For rows in union
+        for a in union:
 
-        for row in self.rows:
+            # Add to set of rows checked
+            has_match = False
+            a_id = make_row_id(a)
 
-            A = self
-            B = comparator
+            if a_id in done:
+                continue
 
-            ''' 1. If there are two overlapping spans with the same label - 
-                include in the gold standard the span with the longest span 
-                (delete the shorter one) - create a log of it. 
-            '''
-            # Same label
-            if \
-                A.indices.index_type == B.indices.index_type and \
-                (
-                    # A begins inside B
-                    A.indices.start > B.indices.start and
-                    A.indices.start < B.indices.end
-                ) or \
-                (
-                    # B begins inside A
-                    B.indices.start > A.indices.start and
-                    B.indices.start < A.indices.end
-                ):
-                lenA = len(A.indices.end - A.indices.start) 
-                lenB = len(B.indices.end - B.indices.start)
+            # For rows in union
+            for b in union:
 
-                if (lenA > lenB):
-                    return [ A ]
-                else:
-                    return [ B ]
+                # If [a] and [b] are different
+                b_id = make_row_id(b)
+                if (a != b and a.annotator_id != b.annotator_id and b_id not in done):
 
-            # Same span
-            elif A.indices.start == B.indices.start and \
-                A.indices.end == B.indices.end:
+                    # Check if they match (returns list)
+                    matched = a.check_row_match(b, a_id, b_id)
 
-                ''' 2. if the same span has two different labels — 
-                    include both labels and create a log of it.
-                '''
+                    if len(matched) > 0:
+                        has_match = True
 
-                # Different label
-                if A.indices.index_type != B.indices.index_type:
-                    return [ A, B ]
+                        for match in matched:
+                            if match not in done:
+                                if match == a_id:
+                                    final += [ a ]
+                                else:
+                                    final += [ b ]
+                                done.add(match)
+                        continue
 
-                # Same label
-                return [ A ]
+            if has_match == False:
+                self.log_event(a, "Row only found with one annotator")
+                final.append(a)
+                done.add(a_id)
+        
+        return final
 
-        return None
+    def log_event(self, row, text):
+        row_text = row.text.replace('"', '\"')
+        row_info = f'start: {row.indices.start}, end: {row.indices.end}, label: "{row.indices.index_type}", span: "{row_text}"'
+        sys.stdout.write(f'{{ File: "{os.path.basename(row.file_name)}", Event: "{text}...", RowA: {{ {row_info} }} }}')
+        sys.stdout.write('\n')
 
     def intersect(self, comparator):
         gold = BratFile()
@@ -104,16 +97,7 @@ class BratFile:
         gold = BratFile()
         gold.path = self.path
         row_cnt = 1
-
-        for row in self.rows:
-            new_row = copy(row)
-            gold.rows.append(new_row)
-
-        for row in comparator.rows:
-            existing = gold.get_row_match(row, False)
-            if existing is None:
-                new_row = copy(row)
-                gold.rows.append(new_row)
+        gold.rows = self.union_rows(comparator)
         
         rows_sorted = sorted(gold.rows, key=lambda x: x.indices.start)
         for r in rows_sorted:

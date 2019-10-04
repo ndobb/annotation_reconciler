@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 from src.brat_file import BratFile
 
@@ -28,7 +29,7 @@ def save_gold_file(out_dir: str, file: BratFile):
     separator = '\t'
 
     for row in file.rows:
-        f.write(f'{row.to_string()}\r\n')
+        f.write(f'{row.to_string()}\n')
     
     f.close()
 
@@ -45,6 +46,9 @@ def prep(dir_name: str):
 
     return out_dir, anno1, anno2
 
+def log_event(path, event_text):
+    sys.stdout.write(f'{{ File: "{os.path.basename(path)}", Event: "{event_text}..." }}')
+    sys.stdout.write('\n')
 
 def intersect():
     out_dir, anno1, anno2 = prep("intersect")
@@ -56,11 +60,11 @@ def intersect():
         cnt = len(matches)
 
         if cnt == 0:
-            print(f'No matches found for file "{anno.path}". Skipping file...')
+            log_event(anno.path, 'No matching file was found. Skipping file')
             continue
 
         if cnt > 1:
-            print(f'{cnt} matches were unexpectedly found for "{anno.path}". Taking only the first...')
+            log_event(anno.path, f'{cnt} matching files were unexpectedly found. Taking only the first')
 
         match = matches[0]
         gold = anno.intersect(match)
@@ -77,12 +81,12 @@ def union():
         cnt = len(matches)
 
         if cnt == 0:
-            print(f'No matches found for file "{anno.path}". Saving single annotation file without union...')
+            log_event(anno.path, 'No matches found for file. Saving single annotation file without union')
             save_gold_file(out_dir, anno)
             continue
 
         if cnt > 1:
-            print(f'{cnt} matches were unexpectedly found for "{anno.path}". Taking only the first...')
+            log_event(anno.path, f'{cnt} matching files were unexpectedly found. Taking only first')
 
         match = matches[0]
         gold = anno.union(match)
@@ -97,7 +101,7 @@ def union():
         # If none, only the second annotator has this file and
         # it has not been processed, so save as gold.
         if len(matches) == 0:
-            print(f'File "{anno.path}" was only present in the second annotator''s directory. Saving single annotation file without union...')
+            sys.stdout.write(f'File: "{anno.path}", Event: "File was only present in second annotator''s directory. Saving single annotation file without union..."')
             save_gold_file(out_dir, anno)
     
 union()

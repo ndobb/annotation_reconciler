@@ -1,18 +1,18 @@
 T1	LivingSituation 17 22	Lives
-T2	Method 17 57	Lives with parents and with two siblings
-T3	Residence 107 112	house
-T4	Status 17 22	Lives
-T5	Status 107 112	house
-T6	Type 107 112	house
-T7	Location 114 125	in Corrales
-T8	Family 172 178	father
-T9	Other 179 185	smokes
-T10	Family 225 231	mother
-T11	Type 172 178	father
-T12	Type 225 230	mothe
-T13	Family 49 57	siblings
-T14	Type 49 57	siblings
-T15	Amount 45 48	two
-T16	Amount 63 74	18-year-old
-T17	Amount 92 103	14-year-old
-T18	Status 108 113	just a test, yo
+T2	Status 17 22	Lives
+T3	Method 17 57	Lives with parents and with two siblings
+T4	Amount 45 48	two
+T5	Family 49 57	siblings
+T6	Type 49 57	siblings
+T7	Amount 63 74	18-year-old
+T8	Amount 92 103	14-year-old
+T9	Residence 107 112	house
+T10	Status 107 112	house
+T11	Type 107 112	house
+T12	Status 108 113	just a test, yo
+T13	Location 114 125	in Corrales
+T14	Family 172 178	father
+T15	Type 172 178	father
+T16	Other 179 185	smokes
+T17	Family 225 231	mother
+T18	Type 225 230	mothe
