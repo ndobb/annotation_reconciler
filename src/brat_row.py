@@ -18,6 +18,8 @@ class Indices:
         val = splt[0]
         if val.isnumeric():
             return int(val)
+            
+        return -1
 
 class BratRow:
     def __init__(self, file_name: str, row: str):
