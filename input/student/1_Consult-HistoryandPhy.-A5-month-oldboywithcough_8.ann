@@ -1,0 +1,17 @@
+T1	NAME 17 22	Lives
+T2	NAME 17 57	Lives with parents and with two siblings
+T3	DOCTOR 107 112	house
+T4	HOSPITAL 17 22	Lives
+T5	ADDRESS 107 112	house
+T6	ADDRESS 107 112	house
+T7	ADDRESS 114 125	in Corrales
+T8	COUNTRY 172 178	father
+T9	EMAIL 179 185	smokes
+T10	ADDRESS 225 231	mother
+T11	PHONE_OR_FAX 172 178	father
+T12	PROFESSION 225 230	mothe
+T13	NAME 49 57	siblings
+T14	AGE 49 57	siblings
+T15	AGE 45 48	two
+T16	DATE 63 74	18-year-old
+T17	URL 92 103	14-year-old

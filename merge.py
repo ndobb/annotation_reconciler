@@ -58,8 +58,7 @@ def merge_annotations():
         cnt = len(matches)
 
         if cnt == 0:
-            log_event(anno.path, 'No matches found for file. Saving single annotation file without merge')
-            save_gold_file(out_dir, anno)
+            log_event(anno.path, 'No matches found for file. Skipping')
             continue
 
         if cnt > 1:

@@ -1,0 +1,10 @@
+T1	PATIENT 32 38	single
+T2	DOCTOR 32 38	single
+T3	PATIENT 29 31	is
+T4	HOSPITAL 43 55	is a student
+T5	PHONE 48 56	student.
+T6	MEDICALRECORD 43 45	is
+T7	LICENSE 60 68	does not
+T8	IDNUM 69 74	smoke
+T10	AGE 76 89	drink alcohol
+T11	DATE 93 106	consume drugs

@@ -1,7 +1,7 @@
 import os
 import sys
 from copy import copy
-from brat_row import BratRow
+from bratmerge.brat_row import BratRow
 
 STUDENT = 'STUDENT'
 I2B2 = 'I2B2'
@@ -18,10 +18,10 @@ PROFESSION = 'PROFESSION'
 URL = 'URL'
 
 # i2b2 labels
-NAME_SUBCATS = set([ 'PATIENT', 'DOCTOR', 'USERNAME' ])
-LOC_SUBCATS = set([ 'HOSPITAL', 'COUNTRY', 'ORGANIZATION', 'ZIP', 'STREET', 'CITY', 'STATE', 'LOCATION-OTHER' ])
-CONTACT_SUBCATS = set([ 'PHONE', 'FAX', 'EMAIL', 'URL', 'IPADDR' ])
-ID_SUBCATS = set([ 'MEDICALRECORD', 'SSN', 'ACCOUNT', 'LICENSE', 'DEVICE', 'IDNUM', 'BIOID', 'HEALTHPLAN', 'VEHICLE' ])
+NAME_SUBCATS = set([ 'PATIENT', 'DOCTOR', 'USERNAME', NAME ])
+LOC_SUBCATS = set([ 'HOSPITAL', 'COUNTRY', 'ORGANIZATION', 'ZIP', 'STREET', 'CITY', 'STATE', 'LOCATION-OTHER', ADDRESS ])
+CONTACT_SUBCATS = set([ 'PHONE', 'FAX', 'EMAIL', 'URL', 'IPADDR', PHONE_OR_FAX ])
+ID_SUBCATS = set([ 'MEDICALRECORD', 'SSN', 'ACCOUNT', 'LICENSE', 'DEVICE', 'IDNUM', 'BIOID', 'HEALTHPLAN', 'VEHICLE', ID ])
 
 UNKNOWN = 'UNKNOWN'
 
@@ -56,7 +56,7 @@ class BratFile:
         i2b2 = comparator
 
         make_row_id = lambda x: f'{x.indices.index_type}|{x.indices.start}|{x.indices.end}'
-        i2b2.rows = [ row for row in i2b2.rows if row.index_type not in [ AGE, DATE, PROFESSION ]]
+        i2b2.rows = [ row for row in i2b2.rows if row.indices.index_type not in [ AGE, DATE, PROFESSION ]]
 
         # Assign parent ids, then union
         for row in student.rows:
@@ -81,10 +81,10 @@ class BratFile:
             for i2 in union:
                 
                 # Check overlap
-                student_inside_i2b2 = std.indices.start > i2.indices.start and std.indices.start < i2.indices.end
-                i2b2_inside_student = i2.indices.start > std.indices.start and i2.indices.start < std.indices.end
+                student_inside_i2b2 = std.indices.start >= i2.indices.start and std.indices.start <= i2.indices.end
+                i2b2_inside_student = i2.indices.start >= std.indices.start and i2.indices.start <= std.indices.end
 
-                if not student_inside_i2b2 or i2b2_inside_student:
+                if not student_inside_i2b2 and not i2b2_inside_student:
                     continue
 
                 # If [std] and [i2b2] are different
@@ -122,7 +122,7 @@ class BratFile:
                     done.add(std_id)
 
         # Get unmatched i2b2 records
-        i2b2_unmatched = [ i2 for i2 in i2b2 if make_row_id(i2) not in done ]
+        i2b2_unmatched = [ i2 for i2 in i2b2.rows if make_row_id(i2) not in done ]
         for unmatched in i2b2_unmatched:
             if unmatched.indices.index_type in LOC_SUBCATS or \
                unmatched.indices.index_type in CONTACT_SUBCATS or \

@@ -1,0 +1,17 @@
+T1	PATIENT 17 22	Lives
+T2	PATIENT 17 57	Lives with parents and with two siblings
+T3	DOCTOR 107 112	house
+T4	HOSPITAL 17 22	Lives
+T5	PATIENT 107 112	house
+T6	HOSPITAL 107 112	house
+T7	Location 114 125	in Corrales
+T8	COUNTRY 172 178	father
+T9	EMAIL 179 185	smokes
+T10	COUNTRY 225 231	mother
+T11	PHONE 172 178	father
+T12	MEDICALRECORD 225 230	mothe
+T13	Family 49 57	siblings
+T14	AGE 49 57	siblings
+T15	AGE 45 48	two
+T16	DATE 63 74	18-year-old
+T17	IDNUM 92 103	14-year-old
