@@ -91,22 +91,27 @@ class BratRow:
 
         # Name: take i2b2 label when there is an overlap 
         if student.indices.index_type == NAME and i2b2.indices.index_type in NAME_SUBCATS:
+            self.log_event("Student and i2b2 rows overlap and match category to subcategory. Keeping i2b2", i2b2)
             return [ i2b2_id ]
 
         # Age, Date, Profession: take student label
         if student.indices.index_type in [ AGE, DATE, PROFESSION ]:
+            self.log_event("Student and i2b2 rows overlap and match category to subcategory. Keeping student", i2b2)
             return [ std_id ]
 
         # Location: take i2b2 label when there is an overlap - if not in i2b2 or not in student label unknown 
         if student.indices.index_type == ADDRESS and i2b2.indices.index_type in LOC_SUBCATS:
+            self.log_event("Student and i2b2 rows overlap and match category to subcategory. Keeping i2b2", i2b2)
             return [ i2b2_id ]
 
         # Contact: take i2b2 label when there is an overlap - if not in i2b2 or not in student label unknown 
         if student.indices.index_type == PHONE_OR_FAX and i2b2.indices.index_type in CONTACT_SUBCATS:
+            self.log_event("Student and i2b2 rows overlap and match category to subcategory. Keeping i2b2", i2b2)
             return [ i2b2_id ]
 
         # ID: take i2b2 label when there is an overlap - if not in i2b2 or not in student label unknown 
         if student.indices.index_type == ID and i2b2.indices.index_type in ID_SUBCATS:
+            self.log_event("Student and i2b2 rows overlap and match category to subcategory. Keeping i2b2", i2b2)
             return [ i2b2_id ]
 
         return []
