@@ -1,7 +1,7 @@
 import os
 import sys
 from copy import copy
-from src.brat_row import BratRow
+from bratunion.brat_row import BratRow
 
 class BratFile:
 

@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil
-from src.brat_file import BratFile
+from bratunion.brat_file import BratFile
 
 def get_annotator_files(path):
     files = []
